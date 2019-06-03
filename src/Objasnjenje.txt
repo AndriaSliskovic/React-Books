@@ -1,0 +1,53 @@
+REAGOVANJE NA KLIK I PRIKAZIVANJE ODREDJENOG PROIZVODA
+
+1.  containers/book-list.js
+
+1.1.    Uvozi { selectBook } from "../actions/index";
+
+1.2.    Renderuje sve knjige prolaskom kroz petlju :
+    return this.props.books.map(book => {
+    return (
+        <li
+          key={book.title}
+          //reaguje na klik i poziva action, salje mu objekat book koji je prosao kroz map
+          onClick={() => this.props.selectBook(book)}
+          className="list-group-item"
+        >
+          {book.title}
+        </li>
+      );
+1.3.    Kada se dogodi klik      
+    onClick={() => this.props.selectBook(book)}
+    -salje objekat book koji je proasao kroz petlju i koji nosi podatke o odabranom proizvodu (book).
+    - Na klik setuje podatke this.props sa onim sto vraca selectBook(book).
+    
+2.  actions/index.js    -   actionCreator
+    
+2.1.    Na klik je pozvana njegova fja selectBook(book)
+
+2.2.    action(rezervisana rec) je objekat koji vraca actionCreator.
+        action u sebi sadrzi obavezan property type:____
+        i stale propertije npr. payload ili value ....
+        U konkretnom primeru:
+        type:"BOOK_SELECTED",
+        payload: book
+2.3.    Na osnovu vrednosti za navedene propertije setuje se objekat action
+
+2.4.    U ovom slucaju iz 1.3 sledi this.props.type i this.props.payload koji zajedno cine action objekat
+
+2.5.    VAZNO - action objekat je napravljen u samom containeru pomocu metode mapDispatchToProps(dispatch)
+
+        function mapDispatchToProps(dispatch) {
+        return bindActionCreators({ selectBook: selectBook }, dispatch);
+        }
+
+3.  reducers/index.js       -   je root reducer, on samo u sebe importuje sve ostale reducere
+
+3.1.    Obicni reduceri su samo obicne funkcije, koliko ima kontejnera, toliko ima "obicnih" reducera
+
+3.2.    U rootReduceru pomocu metode actionCreator() se skupljaju svi "obicni" reduceri
+
+3.3.    Automatskim prolaskom kroz sve reducere pomocu SWITCH petlje kada se naidje na action.type, njegova vrednost setuje na action.payload (u ovom slucaju), sto je u stvari jednako this.props.book
+
+3.4. Na taj nacin je u state (this.props) ubrizgan objekat book, koji dalje ima svoje vrednosti npr. title , br. stranica itd
+
